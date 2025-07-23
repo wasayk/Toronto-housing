@@ -1,0 +1,48 @@
+🔹 Total Resale Price (for KPI)
+Total Resale Price = SUM(toronto_housing[Average_Resale_Price])
+
+🔹 Average Resale Price
+Avg Resale Price = AVERAGE(toronto_housing[Average_Resale_Price])
+
+🔹 Average Unemployment Rate
+Avg Unemployment Rate = AVERAGE(toronto_housing[Unemployment_Rate])
+
+🔹 Average GDP Growth
+Avg GDP Growth = AVERAGE(toronto_housing[GDP_Growth])
+
+🔹 Average Housing Starts
+Avg Housing Starts = AVERAGE(toronto_housing[Housing_Starts])
+
+🔹 YoY Resale Price Growth
+YoY Resale Price = 
+VAR CurrentYear = SELECTEDVALUE(toronto_housing[Year])
+VAR PrevYearNum = CurrentYear - 1
+VAR CurrentAvg = CALCULATE(
+    AVERAGE(toronto_housing[Average_Resale_Price]),
+    toronto_housing[Year] = CurrentYear
+)
+VAR PrevAvg = CALCULATE(
+    AVERAGE(toronto_housing[Average_Resale_Price]),
+    toronto_housing[Year] = PrevYearNum
+)
+RETURN
+DIVIDE(CurrentAvg - PrevAvg, PrevAvg)
+
+🔹 Latest CPI (For KPI Card)
+Latest CPI = 
+CALCULATE(
+    LASTNONBLANKVALUE(
+        toronto_housing[Date],
+        SELECTEDVALUE(toronto_housing[CPI_Toronto])
+    )
+)
+
+🔹 Resale Price % Change (Month Over Month)
+Resale Price % Change = 
+VAR PrevMonth = CALCULATE(
+    AVERAGE(toronto_housing[Average_Resale_Price]),
+    PREVIOUSMONTH(toronto_housing[Date])
+)
+VAR CurrentMonth = AVERAGE(toronto_housing[Average_Resale_Price])
+RETURN
+DIVIDE(CurrentMonth - PrevMonth, PrevMonth)

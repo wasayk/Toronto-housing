@@ -1,0 +1,76 @@
+USE TorontoHousingDB;
+-- 1. Total Number of Records
+-- ✅ Calculates the total number of rows in the dataset (basic sanity check)
+SELECT COUNT(*) AS total_rows
+FROM toronto_housing;
+
+
+-- 2. Average Resale Price Over Time
+-- 📈 Shows the average resale price for each date (monthly trend)
+SELECT 
+    Date,
+    AVG(Average_Resale_Price) AS avg_resale_price
+FROM toronto_housing
+GROUP BY Date
+ORDER BY Date;
+
+
+-- 3. Monthly Housing Starts vs GDP Growth
+-- 📊 Compares housing starts with GDP growth over time (for combo line/bar chart)
+SELECT 
+    Date,
+    Housing_Starts,
+    GDP_Growth
+FROM toronto_housing
+ORDER BY Date;
+
+
+-- 4. Average Unemployment Rate by Year
+-- 📉 Shows yearly average unemployment (used for card or trend line)
+SELECT 
+    Year,
+    AVG(Unemployment_Rate) AS avg_unemployment
+FROM toronto_housing
+GROUP BY Year
+ORDER BY Year;
+
+
+-- 5. CPI Trend Over Time
+-- 💸 Displays Consumer Price Index over time (for line chart)
+SELECT 
+    Date,
+    CPI_Toronto
+FROM toronto_housing
+ORDER BY Date;
+
+
+-- 6. Yearly Summary Stats (All Key Metrics)
+-- 📊 Returns annual averages for all major indicators (used in summary tables or KPIs)
+SELECT 
+    Year,
+    ROUND(AVG(Average_Resale_Price), 0) AS avg_price,
+    ROUND(AVG(Housing_Starts), 0) AS avg_starts,
+    ROUND(AVG(Unemployment_Rate), 2) AS avg_unemployment,
+    ROUND(AVG(GDP_Growth), 2) AS avg_gdp,
+    ROUND(AVG(CPI_Toronto), 1) AS avg_cpi
+FROM toronto_housing
+GROUP BY Year
+ORDER BY Year;
+
+
+-- 7. Monthly % Change in Resale Price
+-- 📈 Calculates month-to-month percent change in average resale price
+WITH MonthlyPrices AS (
+  SELECT 
+      Date,
+      Average_Resale_Price,
+      LAG(Average_Resale_Price) OVER (ORDER BY Date) AS prev_price
+  FROM toronto_housing
+)
+SELECT 
+    Date,
+    Average_Resale_Price,
+    prev_price,
+    ROUND(((Average_Resale_Price - prev_price) / prev_price) * 100, 2) AS pct_change
+FROM MonthlyPrices
+WHERE prev_price IS NOT NULL;
