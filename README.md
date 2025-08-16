@@ -23,7 +23,7 @@ Analyze housing resale trends in Toronto and how they relate to macroeconomic in
  - CPI increased steadily while GDP growth slowed post-Q3.
 
 ## 🗂 Files
-- `toronto_housing_economics_raw.csv`
+- `wellbeing-toronto-housing.xlsx`
 - `toronto_housing_economics_cleaned.csv`
 - `etl_cleaning.py`
 - 'insert_to_sql.py'
@@ -32,5 +32,4 @@ Analyze housing resale trends in Toronto and how they relate to macroeconomic in
 - `Toronto_Housing_Dashboard.pbix`
 
 ## 📎 Notes
-- Data is mock-generated.
 - All DAX measures and SQL queries are explained in the attached txt files.
