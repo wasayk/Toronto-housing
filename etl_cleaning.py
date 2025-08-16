@@ -1,25 +1,51 @@
 import pandas as pd
 
-# Load raw dataset
-raw_file = r"C:\Users\abdul\OneDrive\Documents\Wasay Data Projects\Toronto Economics Analysis\toronto_housing_economics_raw.csv"
-df = pd.read_csv(raw_file)
+# ---------- Extract ----------
+# Load Excel file
+input_file = "wellbeing-toronto-housing.xlsx"
+xls = pd.ExcelFile(input_file)
 
-# Convert Date column to datetime
-df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+# Read both raw sheets
+df_2008 = pd.read_excel(xls, sheet_name="RawDataRef-Period2008")
+df_2011 = pd.read_excel(xls, sheet_name="RawDataRef_2011")
 
-# Extract Year and Month
-df["Year"] = df["Date"].dt.year
-df["Month"] = df["Date"].dt.month
+# Add year column to track data origin
+df_2008["dataset_year"] = 2008
+df_2011["dataset_year"] = 2011
 
-# Clean numeric fields (just enforce consistent types)
-df["Average_Resale_Price"] = df["Average_Resale_Price"].astype(int)
-df["Housing_Starts"] = df["Housing_Starts"].astype(int)
+# ---------- Transform ----------
+def clean_columns(df):
+    """
+    Standardizes column names to snake_case and strips spaces.
+    """
+    df.columns = (
+        df.columns.str.strip()
+                  .str.lower()
+                  .str.replace(" ", "_")
+                  .str.replace("-", "_")
+    )
+    return df
 
-# Optional sanity check print
-print("✅ Sample cleaned data:")
-print(df.head())
+df_2008 = clean_columns(df_2008)
+df_2011 = clean_columns(df_2011)
 
-# Export cleaned CSV
-output_path = (r"C:\Users\abdul\OneDrive\Documents\Wasay Data Projects\Toronto Economics Analysis\cleaned_toronto_housing.csv")
-df.to_csv(output_path, index=False)
-print(f"✅ Cleaned file saved to: {output_path}")
+# Ensure numeric columns are numeric
+for col in df_2008.columns:
+    if col not in ["neighbourhood", "dataset_year"]:
+        df_2008[col] = pd.to_numeric(df_2008[col], errors="coerce")
+
+for col in df_2011.columns:
+    if col not in ["neighbourhood", "dataset_year"]:
+        df_2011[col] = pd.to_numeric(df_2011[col], errors="coerce")
+
+# Combine datasets
+combined_df = pd.concat([df_2008, df_2011], ignore_index=True)
+
+# Optional: sort by neighbourhood then year
+combined_df = combined_df.sort_values(by=["neighbourhood", "dataset_year"]).reset_index(drop=True)
+
+# ---------- Load ----------
+output_file = "cleaned_toronto_housing.csv"
+combined_df.to_csv(output_file, index=False)
+
+print(f"Cleaned dataset saved to {output_file}")
