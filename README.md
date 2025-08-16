@@ -26,9 +26,9 @@ Analyze housing resale trends in Toronto and how they relate to macroeconomic in
 - `wellbeing-toronto-housing.xlsx`
 - `toronto_housing_economics_cleaned.csv`
 - `etl_cleaning.py`
-- 'insert_to_sql.py'
-- 'Dax_measures.txt'
-- 'sql_queries.txt'
+- `insert_to_sql.py`
+- `Dax_measures.txt`
+- `sql_queries.txt`
 - `Toronto_Housing_Dashboard.pbix`
 
 ## 📎 Notes
